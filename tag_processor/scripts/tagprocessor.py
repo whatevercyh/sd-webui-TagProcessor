@@ -83,28 +83,6 @@ def tag_preserve(tagdir,tags_to_preserve):#tag反向删除
             pass
         pass
     return tag_count(tagdir)
-    '''
-    # tagfiles=os.listdir()
-    # for tagfile in tagfiles:
-    #     if(tagfile.endswith('.txt')):
-    #         tags=0
-    #         with open(tagfile,'r') as f:
-    #             tags=f.readline()
-    #             pass
-    #         tags=tags.split(', ')
-    #         newtags=[]
-    #         for t in tags:
-    #             if(t in tags_expected):
-    #                 newtags.append(t)
-    #                 pass
-    #             pass
-    #         with open(tagfile,'w') as f:
-    #             newtags=", ".join(newtags)
-    #             f.write(newtags)
-    #             pass
-    #         pass
-    #     pass
-    '''
     pass
 
 def tag_exchange(tagdir,tags_old=None,tag_new=None):#tag替换，tags_old的词替换为tag_new,可用于将近意tag化简
@@ -149,11 +127,6 @@ def tag_insert(tagdir,tags_to_insert):#添加tag
             tags=tag_split(tags)
             tags=tags_to_insert+tags
             tags=sorted(set(tags),key=tags.index)
-            '''
-            # tags=set(tags)#qu chong
-            # tags=list(tags)#
-            #tags.insert(0,triggertag)
-            '''
             with open(os.path.join(tagdir,tagfile),'w') as f:
                 tags=', '.join(tags)
                 f.write(tags)
@@ -252,6 +225,7 @@ class reminderPlugin(scripts.Script):
                 tag_deleteasnum_button.click(fn=tag_delete_asnum,inputs=[tag_dir_text,tag_num],outputs=tag_count_text)
                 tag_quchong_button.click(fn=tag_quchong,inputs=tag_dir_text,outputs=tag_count_text)
             else:
+                #根据当前的Tab来设置点击后数据输出的组件
                 tag_count_button.click(fn=tag_count,inputs=tag_dir_text,outputs=tag_count_text)
                 tag_delete_button.click(fn=tag_delete,inputs=[tag_dir_text,tag_delete_text],outputs=tag_count_text)
                 tag_preserve_button.click(fn=tag_preserve,inputs=[tag_dir_text,tag_preserve_text],outputs=tag_count_text)
@@ -259,6 +233,5 @@ class reminderPlugin(scripts.Script):
                 tag_insert_button.click(fn=tag_insert,inputs=[tag_dir_text,tags_insert_text],outputs=tag_count_text)
                 tag_deleteasnum_button.click(fn=tag_delete_asnum,inputs=[tag_dir_text,tag_num],outputs=tag_count_text)
                 tag_quchong_button.click(fn=tag_quchong,inputs=tag_dir_text,outputs=tag_count_text)
-                #根据当前的Tab来设置点击后数据输出的组件
                 pass
         return [tag_dir_text,tag_count_button,tag_count_text,tag_delete_button,tag_delete_text]
