@@ -83,6 +83,28 @@ def tag_preserve(tagdir,tags_to_preserve):#tag反向删除
             pass
         pass
     return tag_count(tagdir)
+    '''
+    # tagfiles=os.listdir()
+    # for tagfile in tagfiles:
+    #     if(tagfile.endswith('.txt')):
+    #         tags=0
+    #         with open(tagfile,'r') as f:
+    #             tags=f.readline()
+    #             pass
+    #         tags=tags.split(', ')
+    #         newtags=[]
+    #         for t in tags:
+    #             if(t in tags_expected):
+    #                 newtags.append(t)
+    #                 pass
+    #             pass
+    #         with open(tagfile,'w') as f:
+    #             newtags=", ".join(newtags)
+    #             f.write(newtags)
+    #             pass
+    #         pass
+    #     pass
+    '''
     pass
 
 def tag_exchange(tagdir,tags_old=None,tag_new=None):#tag替换，tags_old的词替换为tag_new,可用于将近意tag化简
@@ -97,6 +119,35 @@ def tag_exchange(tagdir,tags_old=None,tag_new=None):#tag替换，tags_old的词�
             tags=tag_split(tags)
             for i in range(len(tags)):
                 if(tags[i] in tags_old):
+                    tags[i]=tag_new
+                    pass
+                pass
+            with open(os.path.join(tagdir,tagfile),'w') as f:
+                tags=', '.join(tags)
+                f.write(tags)
+                pass
+            pass
+        pass
+    return tag_quchong(tagdir)
+    pass
+
+def tag_containexchange(tagdir,tag_old=None,tag_new=None):#tag包含替换，将包含tag_old的词替换为tag_new
+    tagfiles=os.listdir(tagdir)
+    #tags_old=tag_split(tags_old)
+    for tagfile in tagfiles:
+        if(tagfile.endswith('.txt')):
+            with open(os.path.join(tagdir,tagfile),'r') as f:
+                tags=f.readline()
+                pass
+            #tags=tags.split(', ')
+            tags=tag_split(tags)
+            for i in range(len(tags)):
+                '''
+                if(tags[i] in tags_old):
+                    tags[i]=tag_new
+                    pass
+                '''
+                if(tag_old in tags[i]):
                     tags[i]=tag_new
                     pass
                 pass
@@ -127,6 +178,11 @@ def tag_insert(tagdir,tags_to_insert):#添加tag
             tags=tag_split(tags)
             tags=tags_to_insert+tags
             tags=sorted(set(tags),key=tags.index)
+            '''
+            # tags=set(tags)#qu chong
+            # tags=list(tags)#
+            #tags.insert(0,triggertag)
+            '''
             with open(os.path.join(tagdir,tagfile),'w') as f:
                 tags=', '.join(tags)
                 f.write(tags)
@@ -185,7 +241,7 @@ def tag_quchong(tagdir):
         pass
     return tag_count(tagdir)
     pass
- 
+
 class reminderPlugin(scripts.Script):
     def __init__(self) -> None:
         super().__init__()
@@ -207,7 +263,8 @@ class reminderPlugin(scripts.Script):
                 tag_preserve_button=gr.Button(value="Tag反向删除",variant='primary')
                 tag_preserve_text=gr.Textbox(label="Tag反向删除")
                 tag_exchange_button=gr.Button(value="Tag替换",variant='primary')
-                tags_old_text=gr.Textbox(label="旧tags（可多个）")
+                tag_containexchange_buttion=gr.Button(value="Tag包含替换",variant='primary')
+                tags_old_text=gr.Textbox(label="旧tags（正常替换可多个，包含替换只能单个）")
                 tag_new_text=gr.Textbox(label="新tag（单个）")
                 tag_insert_button=gr.Button(value="添加tag",variant='primary')
                 tags_insert_text=gr.Textbox(label="添加tag(可多个)")
@@ -221,17 +278,19 @@ class reminderPlugin(scripts.Script):
                 tag_delete_button.click(fn=tag_delete,inputs=[tag_dir_text,tag_delete_text],outputs=tag_count_text)
                 tag_preserve_button.click(fn=tag_preserve,inputs=[tag_dir_text,tag_preserve_text],outputs=tag_count_text)
                 tag_exchange_button.click(fn=tag_exchange,inputs=[tag_dir_text,tags_old_text,tag_new_text],outputs=tag_count_text)
+                tag_containexchange_buttion.click(fn=tag_containexchange,inputs=[tag_dir_text,tags_old_text,tag_new_text],outputs=tag_count_text)
                 tag_insert_button.click(fn=tag_insert,inputs=[tag_dir_text,tags_insert_text],outputs=tag_count_text)
                 tag_deleteasnum_button.click(fn=tag_delete_asnum,inputs=[tag_dir_text,tag_num],outputs=tag_count_text)
                 tag_quchong_button.click(fn=tag_quchong,inputs=tag_dir_text,outputs=tag_count_text)
             else:
-                #根据当前的Tab来设置点击后数据输出的组件
                 tag_count_button.click(fn=tag_count,inputs=tag_dir_text,outputs=tag_count_text)
                 tag_delete_button.click(fn=tag_delete,inputs=[tag_dir_text,tag_delete_text],outputs=tag_count_text)
                 tag_preserve_button.click(fn=tag_preserve,inputs=[tag_dir_text,tag_preserve_text],outputs=tag_count_text)
                 tag_exchange_button.click(fn=tag_exchange,inputs=[tag_dir_text,tags_old_text,tag_new_text],outputs=tag_count_text)
+                tag_containexchange_buttion.click(fn=tag_containexchange,inputs=[tag_dir_text,tags_old_text,tag_new_text],outputs=tag_count_text)
                 tag_insert_button.click(fn=tag_insert,inputs=[tag_dir_text,tags_insert_text],outputs=tag_count_text)
                 tag_deleteasnum_button.click(fn=tag_delete_asnum,inputs=[tag_dir_text,tag_num],outputs=tag_count_text)
                 tag_quchong_button.click(fn=tag_quchong,inputs=tag_dir_text,outputs=tag_count_text)
+                #根据当前的Tab来设置点击后数据输出的组件
                 pass
         return [tag_dir_text,tag_count_button,tag_count_text,tag_delete_button,tag_delete_text]
